@@ -23,6 +23,14 @@ $('refSearch').oninput=renderReference;renderReference();
 function referenceRelated(n){const ps=refPeople.filter(x=>x[3].includes(n)),ds=refDocs.filter(x=>x[4].includes(n)),ms=refMistakes.filter(x=>x[2].includes(n));return (ps.length||ds.length||ms.length)?'<details class="deep"><summary>Справка и типичные ошибки</summary>'+ps.map(p=>'<p><b>'+esc(p[0])+'</b> — '+esc(p[2])+'</p>').join('')+ds.map(d=>'<p><b>'+esc(d[0])+' · '+esc(d[1])+'</b><br>'+esc(d[2])+'</p>').join('')+ms.map(m=>'<p><b>Не путать: '+esc(m[0])+'</b><br>'+esc(m[1])+'</p>').join('')+'</details>':'';}
 function linkGlossary(){
  const root=$('body');const termNames=new Map(terms.map(t=>[t.term.toLowerCase(),t]));
+ const popup=t=>{ $('termPopupTitle').textContent=t.term;$('termPopupText').textContent=t.def;$('termPopup').showModal(); };
+ const seen=new Set();const candidates=[...terms].filter(t=>t.term.length>=5).sort((a,b)=>b.term.length-a.term.length);
+ root.querySelectorAll('.topicIntro p,.topicColumns article .deep p').forEach(p=>{
+  if(p.children.length)return;const value=p.textContent;const low=value.toLowerCase();const found=[];
+  for(const t of candidates){const k=t.term.toLowerCase();if(seen.has(k))continue;const i=low.indexOf(k);if(i<0)continue;const before=value[i-1]||'',after=value[i+k.length]||'';if(/[а-яёa-z]/i.test(before)||/[а-яёa-z]/i.test(after))continue;if(found.some(f=>i<f.end&&i+k.length>f.start))continue;found.push({start:i,end:i+k.length,t});seen.add(k);if(found.length===3)break}
+  if(!found.length)return;found.sort((a,b)=>a.start-b.start);const frag=document.createDocumentFragment();let offset=0;
+  for(const f of found){frag.append(document.createTextNode(value.slice(offset,f.start)));const b=document.createElement('button');b.className='termInline';b.textContent=value.slice(f.start,f.end);b.onclick=()=>popup(f.t);frag.append(b);offset=f.end}frag.append(document.createTextNode(value.slice(offset)));p.replaceChildren(frag);
+ });
  root.querySelectorAll('.termTable tbody tr td:first-child').forEach(td=>{const t=termNames.get(td.textContent.toLowerCase());if(!t)return;const b=document.createElement('button');b.className='termInline';b.textContent=t.term;b.onclick=()=>{ $('termPopupTitle').textContent=t.term;$('termPopupText').textContent=t.def;$('termPopup').showModal();};td.replaceChildren(b)});
 }
 $('termPopupClose').onclick=()=>$('termPopup').close();
