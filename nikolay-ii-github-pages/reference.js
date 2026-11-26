@@ -12,7 +12,7 @@ function renderReference(){
  $('refNav').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.ref===referenceMode));
  $('refList').innerHTML=rows.map(x=>{
  if(referenceMode==='dates')return '<article class="refRow"><strong class="refDate">'+esc(x[0])+'</strong><div><h3>'+esc(x[1])+'</h3><p>'+esc(x[2])+'</p>'+refLinks([x[3]])+'</div></article>';
- if(referenceMode==='people'){const img=refPortraitUrl(x[4]),src=refPortraitSources[x[4]];return '<article class="refRow refPerson"><div><button class="refPortrait" data-portrait="'+esc(x[4])+'" data-name="'+esc(x[5])+'" aria-label="Увеличить портрет: '+esc(x[5])+'"><img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="'+esc(img)+'" alt="'+esc(x[5])+'"></button></div><div><span class="sourceLabel">'+esc(x[1])+'</span><h3>'+esc(x[5])+'</h3><p>'+esc(x[2])+'</p>'+refLinks(x[3])+(src?'<p class="sourceLabel"><a href="'+esc(src.source)+'" target="_blank" rel="noopener">Источник портрета: Wikimedia Commons</a></p>':'')+'</div></article>';}
+ if(referenceMode==='people'){const img=refPortraitUrl(x[4]),src=refPortraitSources[x[4]];return '<article class="refRow refPerson"><div><button class="refPortrait" data-portrait="'+esc(x[4])+'" data-name="'+esc(x[5])+'" aria-label="Увеличить портрет: '+esc(x[5])+'"><img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="'+esc(img)+'" alt="'+esc(x[5])+'"></button></div><div><span class="sourceLabel">'+esc(x[1])+'</span><h3>'+esc(x[5])+'</h3><p>'+esc(x[2])+'</p>'+refLinks(x[3])+'</div></article>';}
  if(referenceMode==='docs')return '<article class="refRow"><strong class="refDate">'+esc(x[0])+'</strong><div><h3>'+esc(x[1])+'</h3><p><b>Содержание:</b> '+esc(x[2])+'</p><p><b>Для ЕГЭ:</b> '+esc(x[3])+'</p>'+refLinks(x[4])+'</div></article>';
  if(referenceMode==='chains')return '<article class="refChain"><h3>'+esc(x[0])+'</h3><div class="refFlow">'+x[1].map((p,i)=>'<div><span>'+ (i+1)+'</span>'+esc(p)+'</div>').join('')+'</div>'+refLinks(x[2])+'</article>';
  return '<article class="refRow"><strong>'+esc(x[0])+'</strong><div><p>'+esc(x[1])+'</p>'+refLinks(x[2])+'</div></article>';
@@ -20,7 +20,7 @@ function renderReference(){
  refWire($('refList'));
  $('refList').querySelectorAll('[data-portrait]').forEach(b=>{
  const img=b.querySelector('img'),src=refPortraitSources[b.dataset.portrait];
- if(src)img.addEventListener('error',()=>{if(img.dataset.failed){b.disabled=true;b.title='Фото не загрузилось; откройте ссылку на источник';return}img.dataset.failed='1';img.src='https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(b.dataset.portrait.slice(8))});
+ if(src)img.addEventListener('error',()=>{if(img.dataset.failed){b.disabled=true;b.title='Фото не загрузилось';return}img.dataset.failed='1';img.src='https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(b.dataset.portrait.slice(8))});
  b.onclick=()=>{$('largeImage').src=img.currentSrc||img.src;$('largeCaption').textContent=b.dataset.name;$('lightbox').showModal()};
  });
 }
