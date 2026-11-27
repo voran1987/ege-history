@@ -15,7 +15,7 @@ function figure(a){return '<figure class="history-figure"><a href="assets/'+a[0]
 const portraitMap={"И. В. Сталин":"stalin","Н. И. Бухарин":"bukharin","Н. И. Ежов":"yezhov"};
 function portrait(m){const k=portraitMap[m[0]];return k?'<a class="person-image" target="_blank" rel="noopener" href="assets/person-'+k+'.jpg"><img loading="lazy" decoding="async" style="display:block;width:100%;max-height:185px;object-fit:contain" src="assets/person-'+k+'.jpg" alt="'+esc(m[0])+'"></a>':''}
 function personEntry(m){return '<article class="person-entry">'+portrait(m)+'<div><h3>'+esc(m[0])+'</h3><p>'+esc(m[1])+'</p>'+links(m[2])+'</div></article>'}
-const tabs=['Исходная схема','Большие темы','Хронология','Обобщающие таблицы','Личности','Документы','Словарь','Культура','Иллюстрации','Всеобщая история','Самопроверка'];
+const tabs=['Исходная схема','Большие темы','Хронология','Обобщающие таблицы','Личности','Документы','Словарь','Культура','Иллюстрации','Всеобщая история'];
 let done=new Set();try{done=new Set(JSON.parse(localStorage.getItem('history1921-1939')||'[]'))}catch(e){}let active=1,view='Исходная схема',filter='';
 const links=ns=>'<div class="links">'+ns.map(n=>'<button data-topic="'+n+'">'+n+'. '+esc(topics[n-1].title)+' →</button>').join('')+'</div>';
 function wire(root){root.querySelectorAll('[data-topic]').forEach(b=>b.onclick=()=>openTopic(Number(b.dataset.topic)))}
@@ -29,7 +29,7 @@ if(view==='Хронология'){let last=0;el.innerHTML='<h2>Хронолог�
 if(view==='Обобщающие таблицы'){el.innerHTML='<h2>Обобщающие таблицы</h2>'+tables.map(t=>'<article class="ref"><h3>'+esc(t[0])+'</h3><div class="tableWrap"><table><thead><tr>'+t[1].map(c=>'<th scope="col">'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+t[2].map(r=>'<tr>'+r.map(c=>'<td>'+esc(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+links(t[3])+'</article>').join('');wire(el);return}
 if(view==='Личности'){el.innerHTML='<h2>Исторические личности</h2><div class="people-grid">'+sections['Личности'].map(personEntry).join('')+'</div>';wire(el);return;}
 if(view==='Иллюстрации'){el.innerHTML='<h2>Исторические иллюстрации</h2><div class="art-grid">'+visuals.map(a=>'<article>'+figure(a)+links(a[3])+'</article>').join('')+'</div>';wire(el);return;}
-if(view==='Самопроверка'){el.innerHTML='<h2>Самопроверка</h2><p class="hint">Авторские тренировочные задания, не из сборника Артасова.</p>'+checks.map((q,i)=>'<article class="quiz"><h3>'+(i+1)+'. '+esc(q[0])+'</h3><input id="answer'+i+'" placeholder="Ваш ответ"> <button data-check="'+i+'">Проверить</button><p id="result'+i+'" aria-live="polite"></p>'+links([q[3]])+'</article>').join('');el.querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.check),s=$('answer'+i).value.toLowerCase().replace(/ё/g,'е').trim().replace(/[,;\s]+/g,'');$('result'+i).textContent=(s===checks[i][1]?'Верно. ':'Ответ: ')+checks[i][2]});wire(el);return}
+
 el.innerHTML='<h2>'+esc(view)+'</h2>'+ (sections[view]||[]).map(m=>'<article class="ref"><h3>'+esc(m[0])+'</h3><p>'+esc(m[1])+'</p>'+links(m[2])+'</article>').join('');wire(el)}
 render();
 </script></body></html>
